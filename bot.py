@@ -9,7 +9,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Создание кнопки с ссылкой на сайт
     keyboard = [
         [
-            InlineKeyboardButton("Открыть сайт", url="http://localhost:5000")
+            InlineKeyboardButton("Открыть сайт", url="https://telegram-bot-site.onrender.com")
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
