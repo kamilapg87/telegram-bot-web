@@ -1,32 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
+# Создание приложения Flask
 app = Flask(__name__)
 
-# Список товаров
+# Пример списка товаров
 products = [
-    {"id": 1, "name": "Кроссовки Nike", "price": "5000 руб.", "image": "https://via.placeholder.com/150"},
-    {"id": 2, "name": "Футболка Adidas", "price": "2000 руб.", "image": "https://via.placeholder.com/150"},
-    {"id": 3, "name": "Часы Casio", "price": "7000 руб.", "image": "https://via.placeholder.com/150"},
+    {"id": 1, "name": "Корм для собак", "price": "500 руб."},
+    {"id": 2, "name": "Лакомства для кошек", "price": "300 руб."},
+    {"id": 3, "name": "Игрушка для собак", "price": "150 руб."},
 ]
 
-# Главная страница: вывод товаров
+# Главная страница
 @app.route('/')
 def home():
     return render_template("index.html", products=products)
 
-# Страница оформления заказа
-@app.route('/order/<int:product_id>', methods=["GET", "POST"])
-def order(product_id):
-    product = next((p for p in products if p["id"] == product_id), None)
-    if request.method == "POST":
-        name = request.form["name"]
-        phone = request.form["phone"]
-        address = request.form["address"]
-        print(f"Заказ получен: {name}, {phone}, {address}, Товар: {product['name']}")
-        return redirect(url_for("home"))
-    return render_template("order.html", product=product)
+# Обработчик поиска товаров
+@app.route('/search', methods=['POST'])
+def search():
+    query = request.form['query'].lower()
+    results = [p for p in products if query in p['name'].lower()]
+    return render_template("search_results.html", products=results, query=query)
 
+# Запуск приложения Flask
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
- 
+    app.run(host="0.0.0.0", port=5000, debug=True, load_dotenv=False)
