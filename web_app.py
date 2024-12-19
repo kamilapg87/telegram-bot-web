@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 # Создание приложения Flask
 app = Flask(__name__)
@@ -15,12 +15,12 @@ products = [
 def home():
     return render_template("index.html", products=products)
 
-# Обработчик поиска товаров
-@app.route('/search', methods=['POST'])
+# Обработчик AJAX поиска
+@app.route('/search')
 def search():
-    query = request.form['query'].lower()
+    query = request.args.get('query', '').lower()
     results = [p for p in products if query in p['name'].lower()]
-    return render_template("search_results.html", products=results, query=query)
+    return jsonify({"products": results})
 
 # Запуск приложения Flask
 if __name__ == "__main__":

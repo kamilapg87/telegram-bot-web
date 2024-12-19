@@ -33,17 +33,16 @@
             border: 2px solid #007BFF;
             border-radius: 5px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background: #007BFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        #results {
+            margin-top: 20px;
+            text-align: left;
         }
-        button:hover {
-            background: #0056b3;
+        .result-item {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            margin: 5px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -52,22 +51,41 @@
 
     <!-- Форма поиска -->
     <div class="search-box">
-        <form method="POST" action="/search">
-            <input type="text" name="query" placeholder="Введите название товара" required>
-            <button type="submit">Искать</button>
-        </form>
+        <input type="text" id="search-input" placeholder="Введите название товара">
     </div>
 
-    <!-- Выводим товары -->
-    {% for product in products %}
-        <div class="product">
-            <h2>{{ product.name }}</h2>
-            <p>Цена: {{ product.price }}</p>
-        </div>
-    {% endfor %}
+    <!-- Результаты поиска -->
+    <div id="results"></div>
 
     <!-- Кнопка службы поддержки -->
     <a class="support-btn" href="https://t.me/vegas_093" target="_blank">Служба поддержки</a>
 
+    <script>
+        document.getElementById("search-input").addEventListener("input", function() {
+            const query = this.value;
+
+            if (query.length >= 2) {
+                fetch(`/search?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById("results");
+                    resultsDiv.innerHTML = "";
+
+                    if (data.products.length > 0) {
+                        data.products.forEach(product => {
+                            const item = document.createElement("div");
+                            item.classList.add("result-item");
+                            item.innerHTML = `<strong>${product.name}</strong> - ${product.price}`;
+                            resultsDiv.appendChild(item);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = "<p>Товары не найдены</p>";
+                    }
+                });
+            } else {
+                document.getElementById("results").innerHTML = "";
+            }
+        });
+    </script>
 </body>
 </html>
